@@ -74,6 +74,11 @@ class HeroListFragment: Fragment() {
         viewModel.getHereos()
     }
 
+    override fun onStop() {
+        viewModel.onStop()
+        super.onStop()
+    }
+
     fun setOnHeroSelectedListener(listener: HeroAdapter.HeroSelectedListener){
         onHeroSelectedListener = listener
     }
