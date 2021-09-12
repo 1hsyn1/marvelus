@@ -7,5 +7,5 @@ data class MarvelListData<T>(
     @SerializedName("limit") var limit: Int?,
     @SerializedName("total") var total: Int?,
     @SerializedName("count") var count: Int?,
-    @SerializedName("results") var results: MutableList<T>
+    @SerializedName("results") var results: MutableList<T>?
 )
