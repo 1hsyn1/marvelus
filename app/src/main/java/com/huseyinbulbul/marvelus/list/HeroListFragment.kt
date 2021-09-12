@@ -1,44 +1,53 @@
 package com.huseyinbulbul.marvelus.list
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.huseyinbulbul.marvelus.databinding.ActivityHeroListBinding
-import com.huseyinbulbul.marvelus.detail.HeroDetailActivity
+import com.huseyinbulbul.marvelus.databinding.FragmentHeroListBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HeroListActivity : AppCompatActivity() {
-    lateinit var views: ActivityHeroListBinding
+class HeroListFragment: Fragment() {
+    companion object{
+        fun newInstance(): HeroListFragment{
+            return HeroListFragment()
+        }
+    }
+
+    lateinit var views: FragmentHeroListBinding
     lateinit var viewModel: HeroListViewModel
 
     private var adapter = HeroAdapter()
+    private var onHeroSelectedListener: HeroAdapter.HeroSelectedListener? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         viewModel = ViewModelProvider(this).get(HeroListViewModel::class.java)
-        views = ActivityHeroListBinding.inflate(LayoutInflater.from(this))
-        setContentView(views.root)
-        views.lifecycleOwner = this
+        views = FragmentHeroListBinding.inflate(LayoutInflater.from(context))
+        views.lifecycleOwner = requireActivity()
+        return views.root
+    }
 
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         adapter.setOnHeroSelectedListener(object: HeroAdapter.HeroSelectedListener{
             override fun onHeroSelected(heroId: Int) {
-                val intent = Intent(this@HeroListActivity, HeroDetailActivity::class.java)
-                intent.putExtra(HeroDetailActivity.HERO_ID, heroId)
-                startActivity(intent)
+                onHeroSelectedListener?.let {
+                    it.onHeroSelected(heroId)
+                }
             }
         })
 
-        views.rvHereos.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        views.rvHereos.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         views.rvHereos.adapter = adapter
         views.rvHereos.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -49,7 +58,7 @@ class HeroListActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.isLoading.observe(this){
+        viewModel.isLoading.observe(requireActivity()){
             if(it){
                 views.rlLoading.visibility = View.VISIBLE
             }else {
@@ -57,7 +66,7 @@ class HeroListActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.listToShow.observe(this){list ->
+        viewModel.listToShow.observe(requireActivity()){list ->
             adapter.submitList(list)
             adapter.notifyDataSetChanged()
         }
@@ -65,8 +74,7 @@ class HeroListActivity : AppCompatActivity() {
         viewModel.getHereos()
     }
 
-    override fun onStop() {
-        viewModel.onStop()
-        super.onStop()
+    fun setOnHeroSelectedListener(listener: HeroAdapter.HeroSelectedListener){
+        onHeroSelectedListener = listener
     }
 }

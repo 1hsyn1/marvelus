@@ -13,15 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Marvelus"
         android:usesCleartextTraffic="true">
-        <activity android:name=".detail.HeroDetailActivity"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"></activity>
-        <activity android:name=".list.HeroListActivity">
+        <activity android:name=".HeroActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".detail.HeroDetailActivity" />
+        <activity android:name=".list.HeroListActivity"></activity>
     </application>
 
 </manifest>

@@ -14,7 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".detail.HeroDetailActivity">
+        tools:context=".detail.HeroDetailActivity"
+        android:background="#ffffff">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_toolbar"
