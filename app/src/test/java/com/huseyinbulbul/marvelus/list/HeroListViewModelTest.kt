@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.huseyinbulbul.marvelus.HeroViewModel
 import com.huseyinbulbul.marvelus.RxImmediateSchedulerRule
+import com.huseyinbulbul.marvelus.common.managers.AnalyticsManager
 import com.huseyinbulbul.marvelus.common.managers.HeroManager
 import io.mockk.*
 import org.junit.Before
@@ -19,12 +20,14 @@ class HeroListViewModelTest {
     @get:Rule
     val rxRule = RxImmediateSchedulerRule()
     lateinit var manager: HeroManager
+    lateinit var analyticsManager: AnalyticsManager
     lateinit var viewModel: HeroListViewModel
 
     @Before
     fun setup(){
         manager = mockk<HeroManager>(relaxed = true)
-        viewModel = HeroListViewModel(manager)
+        analyticsManager = mockk<AnalyticsManager>(relaxed = true)
+        viewModel = HeroListViewModel(manager, analyticsManager)
     }
 
     @Test
@@ -54,6 +57,7 @@ class HeroListViewModelTest {
 
         verify {
             manager.getNext()
+            analyticsManager.sendEvent(AnalyticsManager.GETTING_HEREOS, null)
         }
         assert(viewModel.isLoading.value == true)
     }

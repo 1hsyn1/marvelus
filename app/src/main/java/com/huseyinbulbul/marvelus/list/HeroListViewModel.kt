@@ -3,6 +3,7 @@ package com.huseyinbulbul.marvelus.list
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.huseyinbulbul.marvelus.common.data.Character
+import com.huseyinbulbul.marvelus.common.managers.AnalyticsManager
 import com.huseyinbulbul.marvelus.common.managers.HeroManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,7 +12,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 @HiltViewModel
-class HeroListViewModel @Inject constructor(private val manager: HeroManager): ViewModel() {
+class HeroListViewModel @Inject constructor(private val manager: HeroManager,
+                                            private val analyticsManager: AnalyticsManager): ViewModel() {
     private var disposer = CompositeDisposable()
 
     var isLoading = MutableLiveData(false)
@@ -21,6 +23,7 @@ class HeroListViewModel @Inject constructor(private val manager: HeroManager): V
         if(isLoading.value == true)
             return
 
+        analyticsManager.sendEvent(AnalyticsManager.GETTING_HEREOS, null)
         isLoading.value = true
         disposer.add(manager.getNext()
             .subscribeOn(Schedulers.io())

@@ -26,13 +26,17 @@ class HeroActivity : AppCompatActivity() {
         listFragment = HeroListFragment.newInstance()
         listFragment.setOnHeroSelectedListener(object: HeroAdapter.HeroSelectedListener{
             override fun onHeroSelected(heroId: Int) {
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.fl_fragment_container, HeroDetailFragment.newInstance(heroId))
-                    .addToBackStack("stack")
-                    .commit()
+                viewModel.heroSelected(heroId)
             }
         })
+
+        viewModel.heroId.observe(this){
+            supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.fl_fragment_container, HeroDetailFragment.newInstance(it))
+                    .addToBackStack("stack")
+                    .commit()
+        }
 
         supportFragmentManager
             .beginTransaction()
